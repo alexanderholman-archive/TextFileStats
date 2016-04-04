@@ -125,14 +125,18 @@ $("#drop-area-div").dmUploader({
     },
     onUploadError: function(id, message){
         alert('Error trying to upload #' + id + ': ' + message);
+        form.data('formValidation').resetForm();
     },
     onFileTypeError: function(file){
         alert('File type of ' + file.name + ' is not allowed: ' + file.type);
+        form.data('formValidation').resetForm();
     },
     onFileSizeError: function(file){
         alert('File size of ' + file.name + ' exceeds the limit');
+        form.data('formValidation').resetForm();
     },
     onFileExtError: function(file){
         alert('File extension of ' + file.name + ' is not allowed');
+        form.data('formValidation').resetForm();
     }
 });
