@@ -76,6 +76,16 @@ function handleData( data ) {
         hasResults.removeClass('hide')
         results.collapse('show');
     }
+    if ( data.data.errors.length ) {
+        $ErrorString = "";
+        for( $Key in data.data.errors ) {
+            if ( $ErrorString != "" ) {
+                $ErrorString += "\n";
+            }
+            $ErrorString += data.data.errors[$Key];
+        }
+        alert( $ErrorString );
+    }
 }
 
 $("#drop-area-div").dmUploader({
