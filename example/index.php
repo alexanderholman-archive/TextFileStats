@@ -54,6 +54,20 @@
             </form>
         </div>
     </div>
+    <div class="row text-left">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+            <h3>Please note</h3>
+            <p>I have set up specific criteria for this example, they are:</p>
+            <ul>
+                <li>Files must be <b>under 2MB</b></li>
+                <li>File extensions must end in <b>.txt</b></li>
+                <li>The content type must be <b>text/plain</b></li>
+                <li>The language supported in <b>English</b>, as the only characters I'm looking for letter wise are <b>a to z</b></li>
+                <li>Numbers will be counted during word count but discounted during mean, mode and median tests</li>
+            </ul>
+            <p>Need more support? Well, I'd be pretty rubbish if I could add more! Get in touch and let me know. (I assume, if you're reading this, you have my information)</p>
+        </div>
+    </div>
 </div>
 <template id="resultsTable">
     <table class="table table-striped table-bordered table-hover">

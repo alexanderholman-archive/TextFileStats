@@ -7,7 +7,7 @@ var results = $('#results'),
     uploadProgress = form.find('#uploadProgress'),
     submitInput = form.find('#submitInput'),
     resetInput = form.find('#resetInput'),
-    maxFileSize = ( 100 * 1024 * 1024 ); //100MB
+    maxFileSize = ( 2 * 1024 * 1024 ); //2MB
 
 form
     .formValidation({
