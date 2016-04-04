@@ -58,6 +58,9 @@ uploadProgress.on('hidden.bs.collapse', function () {
 });
 
 function handleData( data ) {
+    if ( data == "" ) {
+        alert( "there has been an error parsing the txt file, zero data was returned" );
+    }
     data = $.parseJSON(data);
     if ( data.status ) {
         var tpl = $( tplResults.html() );
