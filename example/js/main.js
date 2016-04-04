@@ -58,6 +58,9 @@ uploadProgress.on('hidden.bs.collapse', function () {
 });
 
 function handleData( data ) {
+    if ( data == "" ) {
+        alert( "there has been an error parsing the txt file, zero data was returned" );
+    }
     data = $.parseJSON(data);
     if ( data.status ) {
         var tpl = $( tplResults.html() );
@@ -75,7 +78,20 @@ function handleData( data ) {
         noResults.addClass('hide');
         hasResults.removeClass('hide')
         results.collapse('show');
+    } else {
+        form.data('formValidation').resetForm();
+        uploadProgress.hide();
+        uploadProgress.find('.progress-bar').attr('aria-valuenow', 0).text( 0 + '%' ).width(0 + '%');
     }
+    $ErrorString = "";
+    for( $Key in data.data.errors ) {
+        if ( $ErrorString != "" ) {
+            $ErrorString += "\n";
+        }
+        $ErrorString += data.data.errors[$Key];
+    }
+    if ( $ErrorString != "" ) alert( $ErrorString );
+    if ( !data.status && $ErrorString == "" ) alert("Something happened that I wasn't expecting... just in case, the only language this parser supports is English, let me know if you want to add others.");
 }
 
 $("#drop-area-div").dmUploader({
@@ -114,15 +130,19 @@ $("#drop-area-div").dmUploader({
         handleData(data);
     },
     onUploadError: function(id, message){
-        console.log('Error trying to upload #' + id + ': ' + message);
+        alert('Error trying to upload #' + id + ': ' + message);
+        form.data('formValidation').resetForm();
     },
     onFileTypeError: function(file){
-        console.log('File type of ' + file.name + ' is not allowed: ' + file.type);
+        alert('File type of ' + file.name + ' is not allowed: ' + file.type);
+        form.data('formValidation').resetForm();
     },
     onFileSizeError: function(file){
-        console.log('File size of ' + file.name + ' exceeds the limit');
+        alert('File size of ' + file.name + ' exceeds the limit');
+        form.data('formValidation').resetForm();
     },
     onFileExtError: function(file){
-        console.log('File extension of ' + file.name + ' is not allowed');
+        alert('File extension of ' + file.name + ' is not allowed');
+        form.data('formValidation').resetForm();
     }
 });

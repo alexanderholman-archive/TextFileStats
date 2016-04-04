@@ -169,10 +169,12 @@ class Letter {
     }
     public function GetMean( $Values = null ) {
         if ( is_null($Values) ) $Values = $this->WordLetters;
+        $Values = $this->RemoveEmptyWords( $Values );
         return number_format( array_sum($Values) / count($Values), $this->DecimalPoints );
     }
     public function GetMode( $Values = null ) {
         if ( is_null($Values) ) $Values = $this->WordLetters;
+        $Values = $this->RemoveEmptyWords( $Values );
         $Values = array_count_values($Values);
         arsort($Values);
         $Counts = [];
@@ -180,21 +182,31 @@ class Letter {
             $Counts[$Value][] = $Key;
         }
         krsort($Counts);
-        $Mode = $this->GetMean(reset($Counts));
-        return number_format( $Mode, $this->DecimalPoints );
+        $Modes = reset($Counts);
+        foreach( $Modes as $Key => $Mode ) {
+            $Modes[$Key] = number_format( $Mode, $this->DecimalPoints );
+        }
+        return $Modes;
     }
     public function GetMedian( $Values = null ) {
         if ( is_null($Values) ) $Values = $this->WordLetters;
+        $Values = $this->RemoveEmptyWords( $Values );
         $ValueCount = count( $Values );
         if ( $ValueCount % 2 == 0 ) {
-            $Median1Key = $ValueCount / 2;
-            $Median2Key = $Median1Key;
+            $Median1Key = ( $ValueCount / 2 ) - 1;
+            $Median2Key = $Median1Key + 1;
             $Median = $this->GetMean( [ $Values[$Median1Key], $Values[$Median2Key] ] );
         } else {
-            $MedianKey = ( $ValueCount + 1 ) / 2;
+            $MedianKey = ( ( $ValueCount + 1 ) / 2 ) - 1;
             $Median = $Values[$MedianKey];
         }
         return number_format( $Median, $this->DecimalPoints );
+    }
+    public function RemoveEmptyWords( $Values ) {
+        foreach ( $Values as $Key => $Value ) {
+            if ( !$Value ) unset( $Values[$Key] );
+        }
+        return $Values;
     }
     public function IsAllowedLetter( $Letter ) {
         $Matches = [];
@@ -260,11 +272,13 @@ class TextFileStats {
             $this->Errors["extension"] = "The file extension \"" . $this->path[PATHINFO_EXTENSION] . "\" is not in the list of allowed file extensions.";
             $this->__return();
         }
-        if ( !in_array( mime_content_type( $FilePath ), $this->AcceptedFileTypes ) ) {
-            $this->Errors["content_type"] = "The file content \"" . mime_content_type( $FilePath ) . "\" is not in the list of allowed file mime content types.";
-            $this->__return();
+        if ( function_exists( 'mime_content_type' ) ) {
+            if ( !in_array( mime_content_type( $FilePath ), $this->AcceptedFileTypes ) ) {
+                $this->Errors["content_type"] = "The file content \"" . mime_content_type( $FilePath ) . "\" is not in the list of allowed file mime content types.";
+                $this->__return();
+            }
         }
-        $this->Text = file_get_contents( $FilePath );
+        $this->Text = utf8_encode(file_get_contents( $FilePath ));
         $this->Count = new Count( $this->Text );
         $this->Errors = array_merge_recursive( $this->Errors, $this->Count->getErrors() );
         if ( !$this->Count->Words || !$this->Count->Lines ) {
