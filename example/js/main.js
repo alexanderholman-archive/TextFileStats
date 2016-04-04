@@ -78,6 +78,10 @@ function handleData( data ) {
         noResults.addClass('hide');
         hasResults.removeClass('hide')
         results.collapse('show');
+    } else {
+        form.data('formValidation').resetForm();
+        uploadProgress.hide();
+        uploadProgress.find('.progress-bar').attr('aria-valuenow', 0).text( 0 + '%' ).width(0 + '%');
     }
     $ErrorString = "";
     for( $Key in data.data.errors ) {
