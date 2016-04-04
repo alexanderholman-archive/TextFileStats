@@ -278,7 +278,7 @@ class TextFileStats {
                 $this->__return();
             }
         }
-        $this->Text = file_get_contents( $FilePath );
+        $this->Text = utf8_encode(file_get_contents( $FilePath ));
         $this->Count = new Count( $this->Text );
         $this->Errors = array_merge_recursive( $this->Errors, $this->Count->getErrors() );
         if ( !$this->Count->Words || !$this->Count->Lines ) {
