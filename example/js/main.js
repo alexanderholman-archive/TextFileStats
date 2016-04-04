@@ -91,6 +91,7 @@ function handleData( data ) {
         $ErrorString += data.data.errors[$Key];
     }
     if ( $ErrorString != "" ) alert( $ErrorString );
+    if ( !data.status && $ErrorString == "" ) alert("Something happened that I wasn't expecting...");
 }
 
 $("#drop-area-div").dmUploader({
