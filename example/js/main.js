@@ -91,7 +91,7 @@ function handleData( data ) {
         $ErrorString += data.data.errors[$Key];
     }
     if ( $ErrorString != "" ) alert( $ErrorString );
-    if ( !data.status && $ErrorString == "" ) alert("Something happened that I wasn't expecting...");
+    if ( !data.status && $ErrorString == "" ) alert("Something happened that I wasn't expecting... just in case, the only language this parser supports is English, let me know if you want to add others.");
 }
 
 $("#drop-area-div").dmUploader({
