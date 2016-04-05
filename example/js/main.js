@@ -20,7 +20,7 @@ function getOption( Option ) {
         function ( data ) {
             data = $.parseJSON(data);
             if ( data.status ) {
-                return data.data.GetOptions
+                return data.data[Option]
             } else {
                 handleError( data );
                 return false;
