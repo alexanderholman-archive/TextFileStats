@@ -67,7 +67,7 @@
                 <li>The language supported in <b>English</b>, as the only characters I'm looking for letter wise are <b>a to z</b></li>
                 <li>Numbers will be counted during word count but discounted during mean, mode and median tests</li>
             </ul>
-            <p>Need more support? Well, I'd be pretty rubbish if I could add more! Get in touch and let me know. (I assume, if you're reading this, you have my information)</p>
+            <p>Need more support? Well, I'd be pretty rubbish if I couldn't add more! Get in touch and let me know. (I assume, if you're reading this, you have my information)</p>
         </div>
     </div>
 </div>
