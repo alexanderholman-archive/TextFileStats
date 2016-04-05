@@ -12,9 +12,9 @@ foreach( $_REQUEST as $Key => $Value ) {
 
 }
 
-if ( isset( $_FILES[0] ) ) {
+if ( isset( $_FILES['fileUpload'] ) ) {
 
-    $File = $_FILES[0];
+    $File = isset( $_FILES['fileUpload'][0] ) ? $_FILES['fileUpload'][0] : $_FILES['fileUpload'];
 
     $TextFileStats = new TextFileStats( $File['tmp_name'], true, $File['name'], $Options );
 
