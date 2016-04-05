@@ -7,9 +7,9 @@ var results = $('#results'),
     uploadProgress = form.find('#uploadProgress'),
     submitInput = form.find('#submitInput'),
     resetInput = form.find('#resetInput'),
-    allowedTypes = getOption('AcceptedFileTypes') || 'text/plain',
-    extFilter = getOption('AcceptedExtensions') || 'txt',
-    maxFileSize = getOption('AcceptedFileSize') || ( 2 * 1024 * 1024 ); //2MB
+    allowedTypes = /*getOption('AcceptedFileTypes') || */'text/plain',
+    extFilter = /*getOption('AcceptedExtensions') || */'txt',
+    maxFileSize = /*getOption('AcceptedFileSize') || */( 2 * 1024 * 1024 ); //2MB
 
 function getOption( Option ) {
     $.post(

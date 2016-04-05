@@ -348,7 +348,6 @@ class TextFileStats {
      * @var array
      */
     public $AcceptedFileTypes = [
-        '',
         'text/ecmascript',
         'text/html',
         'text/javascript',
