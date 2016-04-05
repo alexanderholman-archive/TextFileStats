@@ -13,13 +13,14 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.2.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/formValidation.min.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" href="./favicon.ico" />
     <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
 </head>
 <body>
 <div class="container-fluid text-center">
     <div class="row bg-primary">
         <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4">
-            <h1>Text File Statistics</h1>
+            <h1 id="logo"><img src="./img/logo.png" alt="Text File Stats" /></h1>
         </div>
     </div>
     <div id="results" class="row collapse" aria-expanded="false">
@@ -69,6 +70,8 @@
         </div>
     </div>
 </div>
+
+<a href="https://github.com/alexanderholman/text-file-stats"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png"></a>
 <template id="resultsTable">
     <table class="table table-striped table-bordered table-hover">
         <thead>

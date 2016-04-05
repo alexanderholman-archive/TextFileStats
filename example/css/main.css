@@ -5,6 +5,14 @@
 body {
     min-width: 320px;
 }
+#logo {
+    margin: 0;
+}
+#logo img {
+    height: auto;
+    max-width: 100%;
+    width: auto;
+}
 .row {
     padding: 30px 0;
 }
