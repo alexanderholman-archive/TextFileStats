@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * Class Count
+ */
 class Count {
     /**
      * @var int
@@ -35,8 +39,14 @@ class Count {
     /**
      * Count constructor.
      * @param string|null $Text
+     * @param array|null $Options
      */
-    public function __construct( $Text = null ) {
+    public function __construct( $Text = null, $Options = null ) {
+        if ( !is_null($Options) && count($Options) ) {
+            foreach( $Options as $Property => $Value ) {
+                if ( property_exists( $this, $Property ) ) $this->{$Property} = $Value;
+            }
+        }
         if ( is_null( $Text ) ) {
             $this->Errors["no_text"] = "No \$Text argument was passed to the class constructor.";
             $this->Words = $this->Lines = 0;
@@ -68,6 +78,10 @@ class Count {
         return $this->Errors;
     }
 }
+
+/**
+ * Class Letter
+ */
 class Letter {
     /**
      * @var string
@@ -113,8 +127,14 @@ class Letter {
     /**
      * Letter constructor.
      * @param Count|null $Count
+     * @param array|null $Options
      */
-    public function __construct( Count $Count = null ) {
+    public function __construct( Count $Count = null, $Options = null ) {
+        if ( !is_null($Options) && count($Options) ) {
+            foreach( $Options as $Property => $Value ) {
+                if ( property_exists( $this, $Property ) ) $this->{$Property} = $Value;
+            }
+        }
         if ( is_null( $Count ) ) {
             $this->Errors["count_null"] = "The \$Count argument passed to the Letter constructor is null. It should be a Count object.";
             return false;
@@ -215,6 +235,10 @@ class Letter {
         return false;
     }
 }
+
+/**
+ * Class TextFileStats
+ */
 class TextFileStats {
     /**
      * @var array
@@ -225,9 +249,17 @@ class TextFileStats {
      */
     public $AcceptedFileTypes = [ "text/plain" ];
     /**
+     * @var int
+     */
+    public $AcceptedFileSize = 2 * 1024 * 1024;
+    /**
      * @var Count
      */
     public $Count;
+    /**
+     * @var array
+     */
+    public $CountOptions = [];
     /**
      * @var string
      */
@@ -239,6 +271,10 @@ class TextFileStats {
     /**
      * @var array
      */
+    public $LetterOptions = [];
+    /**
+     * @var array
+     */
     public $Path = [];
     /**
      * @var array
@@ -247,15 +283,28 @@ class TextFileStats {
     /**
      * @var string
      */
+    private $JSON = "";
+    /**
+     * @var string
+     */
     private $Text = "";
+
     /**
      * TextFileStats constructor.
      * @param string $FilePath
+     * @param bool $Temp
+     * @param string $RealFileName
+     * @param array|null $Options
      */
-    public function __construct( $FilePath, $Temp = false, $RealFileName = "" ) {
+    public function __construct( $FilePath, $Temp = false, $RealFileName = "", $Options = null ) {
+        if ( !is_null($Options) && count($Options) ) {
+            foreach( $Options as $Property => $Value ) {
+                if ( property_exists( $this, $Property ) ) $this->{$Property} = $Value;
+            }
+        }
         if ( !file_exists( $FilePath ) ) {
             $this->Errors["exists"] = "The file \"$FilePath\" does not exist.";
-            $this->__return();
+            return $this->SetJSON();
         }
         if ( !is_readable( $FilePath) ) {
             $this->Errors["readable"] = "The file \"$FilePath\" is not readable";
@@ -263,33 +312,37 @@ class TextFileStats {
                 $this->Errors["readable"] .= ", but the server was able to change the file permissions to 644 in order to make the file readable.";
             } else {
                 $this->Errors["readable"] .= ". The server was unable to change the file permissions to make the file readable.";
-                $this->__return();
+                return $this->SetJSON();
             }
         }
         $this->path = pathinfo( $FilePath );
         $this->FileName = !$Temp ? $this->path['filename'] . '.' . $this->path['extension'] : $RealFileName;
         if ( !in_array( ( !$Temp ? $this->path['extension'] : pathinfo( $RealFileName )['extension'] ), $this->AcceptedExtensions ) ) {
             $this->Errors["extension"] = "The file extension \"" . $this->path[PATHINFO_EXTENSION] . "\" is not in the list of allowed file extensions.";
-            $this->__return();
+            return $this->SetJSON();
         }
         if ( function_exists( 'mime_content_type' ) ) {
             if ( !in_array( mime_content_type( $FilePath ), $this->AcceptedFileTypes ) ) {
                 $this->Errors["content_type"] = "The file content \"" . mime_content_type( $FilePath ) . "\" is not in the list of allowed file mime content types.";
-                $this->__return();
+                return $this->SetJSON();
             }
         }
+        if ( filesize( $FilePath ) > $this->AcceptedFileSize ) {
+            $this->Errors["file_size"] = "The maximum allowed filesize is " . number_format( $this->AcceptedFileSize / 1024 / 1024, 1 ) . "MB.";
+            return $this->SetJSON();
+        }
         $this->Text = utf8_encode(file_get_contents( $FilePath ));
-        $this->Count = new Count( $this->Text );
+        $this->Count = new Count( $this->Text, $this->CountOptions );
         $this->Errors = array_merge_recursive( $this->Errors, $this->Count->getErrors() );
         if ( !$this->Count->Words || !$this->Count->Lines ) {
-            $this->__return();
+            return $this->SetJSON();
         }
-        $this->Letter = new Letter( $this->Count );
+        $this->Letter = new Letter( $this->Count, $this->LetterOptions );
         $this->Errors = array_merge_recursive( $this->Errors, $this->Letter->getErrors() );
         if ( $this->Letter->Common == "" || !count($this->Letter->Mean) || !count($this->Letter->Mode) || !count($this->Letter->Mean) ) {
-            $this->__return();
+            return $this->SetJSON();
         }
-        $this->__return(
+        return $this->SetJSON(
             true,
             [
                 "filename" => $this->FileName,
@@ -311,14 +364,19 @@ class TextFileStats {
     /**
      * @param bool $Status
      * @param array $Data
+     * @return string $Output
      */
-    public function __return( $Status = false, $Data = [] ) {
+    public function SetJSON( $Status = false, $Data = [] ) {
         $OutputArray = [
             'status' => $Status,
             'data' => array_merge_recursive( [ 'errors' => $this->Errors ], $Data )
         ];
-        $Output = json_encode( $OutputArray );
-        die( $Output );
+        $this->JSON = json_encode( $OutputArray );
+        return $Status;
+    }
+
+    public function GetJSON() {
+        return $this->JSON;
     }
 
 }

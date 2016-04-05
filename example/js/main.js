@@ -42,10 +42,9 @@ form
 resetInput.on('click', function(e){
     e.preventDefault();
     fileInput.val('');
-    form.data('formValidation').resetForm();
-    submitInput.show();
+    resetForm();
     if (results.hasClass('in')) results.collapse('hide');
-    if (uploadProgress.hasClass('in'))uploadProgress.collapse('hide');
+    submitInput.show();
 });
 
 results.on('hidden.bs.collapse', function () {
@@ -57,41 +56,47 @@ uploadProgress.on('hidden.bs.collapse', function () {
     uploadProgress.find('.progress-bar').attr('aria-valuenow', 0).text( 0 + '%' ).width(0 + '%');
 });
 
+function resetForm() {
+    form.data('formValidation').resetForm();
+    uploadProgress.hide();
+    uploadProgress.find('.progress-bar').attr('aria-valuenow', 0).text( 0 + '%' ).width(0 + '%');
+}
+
 function handleData( data ) {
     if ( data == "" ) {
         alert( "there has been an error parsing the txt file, zero data was returned" );
-    }
-    data = $.parseJSON(data);
-    if ( data.status ) {
-        var tpl = $( tplResults.html() );
-        tpl.find('#fileName').text(data.data.filename);
-        tpl.find('#WordCount').text(data.data.count.words);
-        tpl.find('#LineCount').text(data.data.count.lines);
-        tpl.find('#Mean').text(data.data.letter.mean);
-        tpl.find('#Mode').text(data.data.letter.mode);
-        tpl.find('#Median').text(data.data.letter.median);
-        tpl.find('#CommonLetter').text(data.data.letter.common);
-        hasResults.append( tpl );
-        form.data('formValidation').resetForm();
-        uploadProgress.hide();
-        uploadProgress.find('.progress-bar').attr('aria-valuenow', 0).text( 0 + '%' ).width(0 + '%');
-        noResults.addClass('hide');
-        hasResults.removeClass('hide')
-        results.collapse('show');
+        resetForm();
     } else {
-        form.data('formValidation').resetForm();
-        uploadProgress.hide();
-        uploadProgress.find('.progress-bar').attr('aria-valuenow', 0).text( 0 + '%' ).width(0 + '%');
-    }
-    $ErrorString = "";
-    for( $Key in data.data.errors ) {
-        if ( $ErrorString != "" ) {
-            $ErrorString += "\n";
+        data = $.parseJSON(data);
+        if ( data.status ) {
+            var tpl = $( tplResults.html() );
+            tpl.find('#fileName').text(data.data.filename);
+            tpl.find('#WordCount').text(data.data.count.words);
+            tpl.find('#LineCount').text(data.data.count.lines);
+            tpl.find('#Mean').text(data.data.letter.mean);
+            tpl.find('#Mode').text(data.data.letter.mode);
+            tpl.find('#Median').text(data.data.letter.median);
+            tpl.find('#CommonLetter').text(data.data.letter.common);
+            hasResults.append( tpl );
+            form.data('formValidation').resetForm();
+            uploadProgress.hide();
+            uploadProgress.find('.progress-bar').attr('aria-valuenow', 0).text( 0 + '%' ).width(0 + '%');
+            noResults.addClass('hide');
+            hasResults.removeClass('hide')
+            results.collapse('show');
+        } else {
+            resetForm();
         }
-        $ErrorString += data.data.errors[$Key];
+        $ErrorString = "";
+        for( $Key in data.data.errors ) {
+            if ( $ErrorString != "" ) {
+                $ErrorString += "\n";
+            }
+            $ErrorString += data.data.errors[$Key];
+        }
+        if ( $ErrorString != "" ) alert( $ErrorString );
+        if ( !data.status && $ErrorString == "" ) alert("Something happened that I wasn't expecting... just in case, the only language this parser supports is English, let me know if you want to add others.");
     }
-    if ( $ErrorString != "" ) alert( $ErrorString );
-    if ( !data.status && $ErrorString == "" ) alert("Something happened that I wasn't expecting... just in case, the only language this parser supports is English, let me know if you want to add others.");
 }
 
 $("#drop-area-div").dmUploader({

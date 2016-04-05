@@ -1,15 +1,25 @@
 <?php
 
-error_reporting(E_ALL);
+error_reporting(0);
 
 require_once "../text-file-stats.php";
 
-foreach( $_FILES as $File ) {
+$Options = [];
 
-    $TextFileStats = new TextFileStats( $File['tmp_name'], true, $File['name'] );
+foreach( $_REQUEST as $Key => $Value ) {
+
+    if ( property_exists( 'TextFileStats', $Key ) ) $Options[$Key] = $Value;
 
 }
 
-$TextFileStats = new TextFileStats( './test4.txt' );
+if ( isset( $_FILES[0] ) ) {
+
+    $File = $_FILES[0];
+
+    $TextFileStats = new TextFileStats( $File['tmp_name'], true, $File['name'], $Options );
+
+    print $TextFileStats->GetJSON();
+
+}
 
 exit;
