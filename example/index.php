@@ -6,7 +6,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Text File Statistics</title>
+    <title>Text File Stats > Example</title>
+    <meta name="description" content="An example of the use of the PHP class TextFileStats, used to extract word and letter statistics from a text file." />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
