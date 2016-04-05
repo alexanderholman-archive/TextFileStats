@@ -105,6 +105,5 @@
 <script src="js/vendor/formvalidator/bootstrap.min.js"></script>
 <script src="js/vendor/dmuploader.min.js"></script>
 <script src="js/main.js"></script>
-<script src="../../src/js/text-file-stats.js"></script>
 </body>
 </html>
