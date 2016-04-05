@@ -4,7 +4,15 @@ error_reporting(0);
 
 require_once "../text-file-stats.php";
 
-$Options = [];
+$Options = [
+    /*'AcceptedExtensions' => [
+        "text",
+        "txt"
+    ],
+    'AcceptedFileTypes' => [
+        'text/plain'
+    ]*/
+];
 
 foreach( $_REQUEST as $Key => $Value ) {
 

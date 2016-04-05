@@ -4,15 +4,7 @@ error_reporting(E_ALL);
 
 require_once "../text-file-stats.php";
 
-$Options = [
-    'AcceptedFileTypes' => [
-        "text/plain",
-        "text/x-pascal",
-        "text/html",
-        "text/css",
-        "text/javascript"
-    ]
-];
+$Options = [];
 
 foreach( $_REQUEST as $Key => $Value ) {
 
