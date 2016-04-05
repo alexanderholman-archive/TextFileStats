@@ -7,7 +7,27 @@ var results = $('#results'),
     uploadProgress = form.find('#uploadProgress'),
     submitInput = form.find('#submitInput'),
     resetInput = form.find('#resetInput'),
-    maxFileSize = ( 2 * 1024 * 1024 ); //2MB
+    allowedTypes = getOption('AcceptedFileTypes') || 'text/plain',
+    extFilter = getOption('AcceptedExtensions') || 'txt',
+    maxFileSize = getOption('AcceptedFileSize') || ( 2 * 1024 * 1024 ); //2MB
+
+function getOption( Option ) {
+    $.post(
+        form.attr('action'),
+        {
+            GetOptions: Option
+        },
+        function ( data ) {
+            data = $.parseJSON(data);
+            if ( data.status ) {
+                return data.data.GetOptions
+            } else {
+                handleError( data );
+                return false;
+            }
+        }
+    )
+}
 
 form
     .formValidation({
@@ -21,8 +41,8 @@ form
             fileUpload: {
                 validators: {
                     file: {
-                        extension: 'txt',
-                        type: 'text/plain',
+                        extension: extFilter,
+                        type: allowedTypes,
                         maxSize: maxFileSize,
                         message: 'Only <b>plain text (.txt)</b> files are supported. Up to <b>100MB</b>.'
                     }
@@ -62,6 +82,18 @@ function resetForm() {
     uploadProgress.find('.progress-bar').attr('aria-valuenow', 0).text( 0 + '%' ).width(0 + '%');
 }
 
+function handleError( data ) {
+    $ErrorString = "";
+    for( $Key in data.data.errors ) {
+        if ( $ErrorString != "" ) {
+            $ErrorString += "\n";
+        }
+        $ErrorString += data.data.errors[$Key];
+    }
+    if ( $ErrorString != "" ) alert( $ErrorString );
+    if ( !data.status && $ErrorString == "" ) alert("Something happened that I wasn't expecting... just in case, the only language this parser supports is English, let me know if you want to add others.");
+}
+
 function handleData( data ) {
     if ( data == "" ) {
         alert( "there has been an error parsing the txt file, zero data was returned" );
@@ -87,15 +119,7 @@ function handleData( data ) {
         } else {
             resetForm();
         }
-        $ErrorString = "";
-        for( $Key in data.data.errors ) {
-            if ( $ErrorString != "" ) {
-                $ErrorString += "\n";
-            }
-            $ErrorString += data.data.errors[$Key];
-        }
-        if ( $ErrorString != "" ) alert( $ErrorString );
-        if ( !data.status && $ErrorString == "" ) alert("Something happened that I wasn't expecting... just in case, the only language this parser supports is English, let me know if you want to add others.");
+        handleError(data)
     }
 }
 
@@ -104,8 +128,8 @@ $("#drop-area-div").dmUploader({
     method: 'POST',
     extraData: {},
     maxFileSize: maxFileSize,
-    allowedTypes: 'text/plain',
-    extFilter: 'txt',
+    allowedTypes: allowedTypes,
+    extFilter: extFilter,
     maxFiles: 1,
     dataType: null,
     fileName: 'fileUpload',

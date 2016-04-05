@@ -26,6 +26,22 @@ if ( isset( $_FILES['fileUpload'] ) ) {
 
     $TextFileStats = new TextFileStats( $File['tmp_name'], true, $File['name'], $Options );
 
+    if ( isset( $_REQUEST[ 'GetOptions' ] ) ) {
+
+        if ( property_exists( $TextFileStats, $_REQUEST[ 'GetOptions' ] ) ) {
+
+            $TextFileStats->SetJSON( true, [ $_REQUEST[ 'GetOptions' ] => $TextFileStats->{$_REQUEST[ 'GetOptions' ]} ] );
+
+        } else {
+
+            $TextFileStats->SetJSON( false, [ 'errors', 'The option ' . $_REQUEST[ 'GetOptions' ] . ' does not exit within TextFileStats' ] );
+
+        }
+
+        die( $TextFileStats->GetJSON() );
+
+    }
+
     print $TextFileStats->GetJSON();
 
 }
